@@ -5,3 +5,8 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+Racer.collection.delete_many
+Race.collection.delete_many
+Entrant.collection.delete_many
+
+#import the json files later
