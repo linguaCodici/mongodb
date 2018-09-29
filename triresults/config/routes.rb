@@ -5,6 +5,16 @@ Rails.application.routes.draw do
     end
 
     resources :races
+
+    namespace :api do
+        resources :races, only: [:index, :show] do
+            resources :results, only: [:index, :show]
+        end
+        resources :racers, only: [:index, :show] do
+            resources :entries, only: [:index, :show]
+        end
+    end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
