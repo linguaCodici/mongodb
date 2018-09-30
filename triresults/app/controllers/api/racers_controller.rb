@@ -16,5 +16,14 @@ module Api
                 # render plain: "/api/racers/#{params[:id]}"
             end
         end
+
+        # POST api/racers
+        # POST api/racers.json
+        def create
+            if !request.accept || request.accept == "*/*"
+                render plain: :nothing, status: :ok
+            else
+            end
+        end
     end
 end

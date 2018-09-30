@@ -15,5 +15,14 @@ module Api
             else
             end
         end
+
+        # POST /api/races/:race_id/results
+        # POST /api/races/:race_id/results.json
+        def create
+            if !request.accept || request.accept == "*/*"
+                render plain: :nothing, status: :ok
+            else
+            end
+        end
     end
 end
