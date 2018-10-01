@@ -1,8 +1,9 @@
 module Api
     class RacesController < ApplicationController
-        # global rescue for id not found
+        # global rescue methods
         rescue_from Mongoid::Errors::DocumentNotFound, with: :record_not_found
         rescue_from ActionView::MissingTemplate, with: :template_not_found
+
         # GET api/races
         # GET api/races.json
         def index
@@ -12,12 +13,14 @@ module Api
         # GET api/races/1
         # GET api/races/1.json
         def show
+            Rails.logger.debug {"#{request.accept}"}
+            # byebug
             # no accept header
             if !request.accept || request.accept == "*/*"
                 render plain: "/api/races/#{params[:id]}"
-            elsif request.accept && request.accept != "*/*"
+            elsif request.accept == "application/xml" || request.accept == "application/json"
                 # find the Race in the db
-                Rails.logger.debug {"request is #{request.accept}"}
+                # Rails.logger.debug {"request is #{request.accept}"}
                 race = Race.find(params[:id])
                 respond_to do |format|
                     # # DEBUG: Disallowed type attribute: "yaml"?
@@ -25,8 +28,6 @@ module Api
                     format.xml  { render :show, status: :ok, content_type: request.accept, locals: {race: race}}
                     format.json { render :show, status: :ok, content_type: request.accept, locals: {race: race}}
                 end
-                # render json: race, status: :ok
-
             else
             end
         end
@@ -107,12 +108,13 @@ module Api
         end
 
         def template_not_found
-            if "application/json" in request.accept
-
-            elsif "application/xml" in request.accept
-
+            Rails.logger.debug {"invalid template #{request.accept}"}
+            # DEBUG: need to figure out how to adapt mixed types
+            if (request.accept.include? "application/json") || (request.accept.include? "application/xml")
+                redirect_to :show
             else
-                render plain: "woops: we do not support that content-type[#{request.accept}]"
+                render plain: "woops: we do not support that content-type[#{request.accept}]",
+                    status: 415
             end
         end
     end

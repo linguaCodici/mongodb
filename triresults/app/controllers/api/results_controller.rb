@@ -10,9 +10,14 @@ module Api
         # GET /api/races/:race_id/results/1
         # GET /api/races/:race_id/results/1.json
         def show
+
+            @result = Race.find(params[:race_id]).
+                entrants.where(:id => params[:id]).first
+            Rails.logger.debug {"found result #{@result}"}
             if !request.accept || request.accept == "*/*"
                 render plain: "/api/races/#{params[:race_id]}/results/#{params[:id]}"
             else
+                render partial: "result", object: @result
             end
         end
 
