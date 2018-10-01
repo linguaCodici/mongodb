@@ -1,5 +1,7 @@
 module Api
     class RacesController < ApplicationController
+        # global rescue for id not found 
+        rescue_from Mongoid::Errors::DocumentNotFound, with: :record_not_found
 
         # GET api/races
         # GET api/races.json
@@ -80,6 +82,10 @@ module Api
 
         def race_params
             params.require(:race).permit(:name, :date)
+        end
+
+        def record_not_found
+            render plain: "woops: cannot find race[#{params[:id]}]", status: :not_found
         end
     end
 end
