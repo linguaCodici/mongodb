@@ -1,8 +1,8 @@
 module Api
     class RacesController < ApplicationController
-        # global rescue for id not found 
+        # global rescue for id not found
         rescue_from Mongoid::Errors::DocumentNotFound, with: :record_not_found
-
+        rescue_from ActionView::MissingTemplate, with: :template_not_found
         # GET api/races
         # GET api/races.json
         def index
@@ -12,12 +12,21 @@ module Api
         # GET api/races/1
         # GET api/races/1.json
         def show
+            # no accept header
             if !request.accept || request.accept == "*/*"
                 render plain: "/api/races/#{params[:id]}"
             elsif request.accept && request.accept != "*/*"
                 # find the Race in the db
+                Rails.logger.debug {"request is #{request.accept}"}
                 race = Race.find(params[:id])
-                render json: race, status: :ok
+                respond_to do |format|
+                    # # DEBUG: Disallowed type attribute: "yaml"?
+                    # fixed: custom show builders
+                    format.xml  { render :show, status: :ok, content_type: request.accept, locals: {race: race}}
+                    format.json { render :show, status: :ok, content_type: request.accept, locals: {race: race}}
+                end
+                # render json: race, status: :ok
+
             else
             end
         end
@@ -85,7 +94,26 @@ module Api
         end
 
         def record_not_found
-            render plain: "woops: cannot find race[#{params[:id]}]", status: :not_found
+            if !request.accept || request.accept == "*/*"
+                render plain: "woops: cannot find race[#{params[:id]}]", status: :not_found
+            else
+                respond_to do |format|
+                    format.json {render template: "api/error_msg.json.jbuilder", status: :not_found,
+                        locals: { :msg => "woops: cannot find race[#{params[:id]}]"}}
+                    format.xml {render template: "api/error_msg.xml.builder", status: :not_found,
+                        locals: { :msg => "woops: cannot find race[#{params[:id]}]"}}
+                end
+            end
+        end
+
+        def template_not_found
+            if "application/json" in request.accept
+
+            elsif "application/xml" in request.accept
+
+            else
+                render plain: "woops: we do not support that content-type[#{request.accept}]"
+            end
         end
     end
 end
