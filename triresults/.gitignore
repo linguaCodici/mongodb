@@ -20,4 +20,4 @@
 /.byebug_history
 
 # Ignore zip files
-/.zip
+/*.zip

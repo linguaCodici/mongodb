@@ -16,10 +16,8 @@ module Api
                 # @entrants = @race.entrants
                 # fresh_when
                 set_race
-                if stale? @race
-                    @entrants = @race.entrants
-                    # request.headers["Last_Modified"] = @entrants.max(:updated_at)
-                    fresh_when last_modified: @entrants.max(:updated_at)
+                @entrants = @race.entrants
+                if stale? last_modified: @entrants.max(:updated_at)
                     render :index, status: :ok
                 end
                 # fresh_when last_modified: @entrants.max(:updated_at)
