@@ -14,8 +14,8 @@ feature "Module #4 URIs", :type => :routing do
 
   around :each do |example|
     if $continue
-      $continue = false 
-      example.run 
+      $continue = false
+      example.run
       $continue = true unless example.exception
     else
       example.skip
@@ -23,31 +23,34 @@ feature "Module #4 URIs", :type => :routing do
   end
 
   context "rq02" do
-    scenario "Application must have custom URIs that route to a controller#action" do 
+    scenario "Application must have custom URIs that route to a controller#action" do
       test_racer_id = "00000001"
       test_race_id = "00000002"
       test_result_id = "00000003"
       test_entry_id = "00000004"
-      expect(:get => "/api/races").to be_routable     
-      expect(:get => "/api/races/#{test_race_id}").to be_routable       
-      expect(:get => "/api/races/#{test_race_id}/results").to be_routable     
-      expect(:get => "/api/races/#{test_race_id}/results/#{test_result_id}").to be_routable  
+      expect(:get => "/api/races").to be_routable
+      expect(:get => "/api/races/#{test_race_id}").to be_routable
+      expect(:get => "/api/races/#{test_race_id}/results").to be_routable
+      expect(:get => "/api/races/#{test_race_id}/results/#{test_result_id}").to be_routable
 
-      expect(:get => "/api/racers").to be_routable    
-      expect(:get => "/api/racers/#{test_racer_id}").to be_routable       
-      expect(:get => "/api/racers/#{test_racer_id}/entries").to be_routable   
-      expect(:get => "/api/racers/#{test_racer_id}/entries/#{test_entry_id}").to be_routable   
+      expect(:get => "/api/racers").to be_routable
+      expect(:get => "/api/racers/#{test_racer_id}").to be_routable
+      expect(:get => "/api/racers/#{test_racer_id}/entries").to be_routable
+      expect(:get => "/api/racers/#{test_racer_id}/entries/#{test_entry_id}").to be_routable
     end
   end
 
   context "rq03" do
-    scenario "GET requests return 200/OK and echo URI when Accept format not given" do 
-      uri = ['/api/racers', '/api/racers/abc', '/api/racers/abc/entries', '/api/racers/abc/entries/def', 
+    scenario "GET requests return 200/OK and echo URI when Accept format not given" do
+      uri = ['/api/racers', '/api/racers/abc', '/api/racers/abc/entries', '/api/racers/abc/entries/def',
              '/api/races', '/api/races/abc', '/api/races/abc/results', '/api/races/abc/results/def']
 
       uri.each { |u|
         page.driver.header('Accept', nil)
         page.driver.get(u)
+        # byebug
+        # Rails.logger.debug {"#{u}"}
+        # p u
         expect(page.status_code).to eql(200)
         expect(page.body.split(',')[0]).to eql(u)
         expect(page.response_headers["Content-Type"]).to include("text/plain")
@@ -63,12 +66,12 @@ feature "Module #4 URIs", :type => :routing do
 
   context "rq04" do
     scenario "Controller for /api/races accepts POST request and renders 200/OK response" do
-      page.driver.post("/api/races") 
+      page.driver.post("/api/races")
       expect(page.status_code).to eql(200)
     end
   end
 
-  context "rq05" do 
+  context "rq05" do
     scenario "TriResultsWS class created as indicated" do
       expect(class_exists?("TriResultsWS"))
       expect(TriResultsWS.included_modules).to include(HTTParty)

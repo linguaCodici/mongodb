@@ -37,7 +37,14 @@ module Api
         def create
             # when Accept is not specified or MIME type
             if !request.accept || request.accept == "*/*"
-                render plain: "#{params[:race][:name]}", status: :ok
+                # params_spec
+                if params[:race]
+                    render plain: "#{params[:race][:name]}", status: :ok
+                else
+                    # uri_spec
+                    render plain: :nothing, status: :ok
+                end
+                # render plain: "#{params[:race][:name]}", status: :ok
             elsif request.accept && request.accept != "*/*"
                 # add a new Race to the db
                 # Explicit hash arguments

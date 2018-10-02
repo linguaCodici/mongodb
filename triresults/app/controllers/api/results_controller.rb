@@ -1,18 +1,21 @@
 module Api
     class ResultsController < ApplicationController
 
-        before_action :set_result, only: [:show, :update]
-        before_action :set_race, only: [:index]
-        rescue_from Mongoid::Errors::DocumentNotFound, with: :id_not_found
+        # before_action :set_result, only: [:show, :update]
+        # before_action :set_race, only: [:index]
+        # rescue_from Mongoid::Errors::DocumentNotFound, with: :id_not_found
 
         # GET /api/races/:race_id/results
         # GET /api/races/:race_id/results.json
         def index
             if !request.accept || request.accept == "*/*"
+                # p "hi"
                 render plain: "/api/races/#{params[:race_id]}/results"
             else
+                # p "oh no"
                 # @entrants = @race.entrants
                 # fresh_when
+                set_race
                 if stale? @race
                     @entrants = @race.entrants
                     request.headers["Last-Modified"] = @entrants.max(:updated_at)
@@ -28,6 +31,7 @@ module Api
             if !request.accept || request.accept == "*/*"
                 render plain: "/api/races/#{params[:race_id]}/results/#{params[:id]}"
             else
+                set_result
                 render partial: "result", object: @result
             end
         end
@@ -60,6 +64,7 @@ module Api
             # end
 
             # DEBUG: this fails because of $pushall
+            set_result
             result_params = params[:result]
             # ["swim", "t1", "bike", "t2", "run"].ea
             if result_params
@@ -102,18 +107,18 @@ module Api
                 entrants.where(:id => params[:id]).first
         end
 
-        def id_not_found
-            if !request.accept || request.accept == "*/*"
-                render plain: "woops: cannot find race[#{params[:race_id]}] result[#{params[:id]}]",
-                    status: :not_found
-            else
-                respond_to do |format|
-                    format.json {render template: "api/error_msg.json.jbuilder", status: :not_found,
-                        locals: { :msg => "woops: cannot find race[#{params[:race_id]}] result[#{params[:id]}]"}}
-                    format.xml {render template: "api/error_msg.xml.builder", status: :not_found,
-                        locals: { :msg => "woops: cannot find racerace[#{params[:race_id]}] result[#{params[:id]}]"}}
-                end
-            end
-        end
+        # def id_not_found
+        #     if !request.accept || request.accept == "*/*"
+        #         render plain: "woops: cannot find race[#{params[:race_id]}] result[#{params[:id]}]",
+        #             status: :not_found
+        #     else
+        #         respond_to do |format|
+        #             format.json {render template: "api/error_msg.json.jbuilder", status: :not_found,
+        #                 locals: { :msg => "woops: cannot find race[#{params[:race_id]}] result[#{params[:id]}]"}}
+        #             format.xml {render template: "api/error_msg.xml.builder", status: :not_found,
+        #                 locals: { :msg => "woops: cannot find racerace[#{params[:race_id]}] result[#{params[:id]}]"}}
+        #         end
+        #     end
+        # end
     end
 end
