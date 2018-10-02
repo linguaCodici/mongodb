@@ -18,9 +18,11 @@ module Api
                 set_race
                 if stale? @race
                     @entrants = @race.entrants
-                    request.headers["Last-Modified"] = @entrants.max(:updated_at)
+                    # request.headers["Last_Modified"] = @entrants.max(:updated_at)
+                    fresh_when last_modified: @entrants.max(:updated_at)
                     render :index, status: :ok
                 end
+                # fresh_when last_modified: @entrants.max(:updated_at)
             end
         end
 
@@ -32,6 +34,7 @@ module Api
                 render plain: "/api/races/#{params[:race_id]}/results/#{params[:id]}"
             else
                 set_result
+                fresh_when(@result)
                 render partial: "result", object: @result
             end
         end
@@ -88,11 +91,11 @@ module Api
                 @result.run=@result.race.race.run
                 @result.run_secs = result_params[:run].to_f
               end
-              Rails.logger.debug {"#{@result.secs}"}
-              fresh_when(@result)
-              @result.save
-            end
+              # Rails.logger.debug {"#{@result.secs}"}
+              # fresh_when(@result)
 
+            end
+            @result.save
             render nothing: true, status: :ok
         end
 
