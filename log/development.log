@@ -1,0 +1,32 @@
+
+
+Started GET "/racers/5bfc9af0aa052b1bb18e690b" for ::1 at 2018-11-27 11:24:17 -0600
+Processing by RacersController#show as HTML
+  Parameters: {"id"=>"5bfc9af0aa052b1bb18e690b"}
+MONGODB | EVENT: #<Mongo::Monitoring::Event::TopologyOpening topology=Unknown>
+MONGODB | Topology type 'unknown' initializing.
+MONGODB | EVENT: #<Mongo::Monitoring::Event::ServerOpening address=localhost:27017 topology=Unknown>
+MONGODB | Server localhost:27017 initializing.
+MONGODB | EVENT: #<Mongo::Monitoring::Event::TopologyChanged prev=Unknown new=Single>
+MONGODB | Topology type 'unknown' changed to type 'single'.
+MONGODB | EVENT: #<Mongo::Monitoring::Event::ServerDescriptionChanged>
+MONGODB | Server description for localhost:27017 changed from 'unknown' to 'standalone'.
+MONGODB | EVENT: #<Mongo::Monitoring::Event::TopologyChanged prev=Single new=Single>
+MONGODB | There was a change in the members of the 'single' topology.
+MONGODB | localhost:27017 | triresults_development.find | STARTED | {"find"=>"racers", "filter"=>{"_id"=>BSON::ObjectId('5bfc9af0aa052b1bb18e690b')}, "lsid"=>{"id"=><BSON::Binary:0x70098795352520 type=uuid data=0x49014f79378f41a7...>}}
+MONGODB | localhost:27017 | triresults_development.find | SUCCEEDED | 0.001s
+Overwriting existing field _id in class RacerInfo.
+MONGODB | localhost:27017 | triresults_development.find | STARTED | {"find"=>"results", "filter"=>{"racer.racer_id"=>BSON::ObjectId('5bfc9af0aa052b1bb18e690b')}, "sort"=>{"race.date"=>-1}, "lsid"=>{"id"=><BSON::Binary:0x70098795352520 type=uuid data=0x49014f79378f41a7...>}}
+MONGODB | localhost:27017 | triresults_development.find | SUCCEEDED | 0.001s
+  Rendered racers/show.html.erb within layouts/application (10.6ms)
+Completed 200 OK in 401ms (Views: 366.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/racers" for ::1 at 2018-11-27 11:24:24 -0600
+Processing by RacersController#index as HTML
+MONGODB | localhost:27017 | triresults_development.find | STARTED | {"find"=>"racers", "filter"=>{}, "lsid"=>{"id"=><BSON::Binary:0x70098795352520 type=uuid data=0x49014f79378f41a7...>}}
+MONGODB | localhost:27017 | triresults_development.find | SUCCEEDED | 0.002s
+  Rendered racers/index.html.erb within layouts/application (37.7ms)
+Completed 200 OK in 51ms (Views: 50.6ms | ActiveRecord: 0.0ms)
+MONGODB | localhost:27017 | admin.endSessions | STARTED | {"endSessions"=>[{"id"=><BSON::Binary:0x70098795352520 type=uuid data=0x49014f79378f41a7...>}]}
+MONGODB | localhost:27017 | admin.endSessions | SUCCEEDED | 0.000s
